@@ -1,14 +1,16 @@
 const endpointsJson = require("./endpoints.json")
-const { selectTopics, selectArticleById } = require("./api.model")
+const { selectTopics, selectArticleById, selectArticles } = require("./api.model")
 
 function getApi(req, res) {
     res.status(200).send({ endpoints: endpointsJson })
 }
+    
 
-function getTopics(req, res) {
+function getTopics(req, res, next) {
     selectTopics().then((topics) => {
         res.status(200).send({ topics: topics })
     })
+    .catch(next)
 }
 
 function getArticleById(req, res, next) {
@@ -20,7 +22,12 @@ function getArticleById(req, res, next) {
     .catch(next)
 }
 
+function getArticles(req, res, next) {
+    selectArticles().then((articles) => {
+        res.status(200).send({ articles: articles })
+    })
+    .catch(next)
+}
 
 
-
-module.exports = { getApi, getTopics, getArticleById }
+module.exports = { getApi, getTopics, getArticleById, getArticles }
