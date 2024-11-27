@@ -1,7 +1,7 @@
 const db = require("./db/connection")
 
 function selectTopics() {
-    return db.query("SELECT * FROM topics")
+    return db.query(`SELECT * FROM topics`)
     .then(({ rows }) => {
         return rows
     })
@@ -12,7 +12,7 @@ function selectArticleById(article_id) {
         return Promise.reject({ status: 400, msg: "bad request" })
     }
     
-    let sqlQuery = "SELECT * FROM articles WHERE article_id = $1"
+    let sqlQuery = `SELECT * FROM articles WHERE article_id = $1`
     const queryValues = [article_id]
 
     return db.query(sqlQuery, queryValues)
@@ -21,13 +21,12 @@ function selectArticleById(article_id) {
             return Promise.reject({ status: 404, msg: "does not exist" })
         } else {
             return rows
-        }
-        
+        } 
     })
 }
 
 function selectArticles() {
-    return db.query("SELECT articles.article_id, articles.article_img_url, articles.author, articles.created_at, articles.title, articles.topic, articles.votes, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at DESC")
+    return db.query(`SELECT articles.article_id, articles.article_img_url, articles.author, articles.created_at, articles.title, articles.topic, articles.votes, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at DESC`)
     .then(({ rows }) => {
         return rows 
     })
@@ -38,7 +37,7 @@ function selectComments(article_id) {
         return Promise.reject({ status: 400, msg: "bad request" })
     }
 
-    let sqlQuery = "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC"
+    let sqlQuery = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`
     const queryValues = [article_id]
 
     return db.query(sqlQuery, queryValues)
@@ -50,5 +49,17 @@ function selectComments(article_id) {
     })
 }
 
+function addComment(comment) {
+    const { username, body, article_id } = comment
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectComments }
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: "Bad request" })
+    }
+
+    return db.query(`INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING comment_id, author, body, article_id, votes, created_at`, [username, body, article_id])
+    .then(({ rows }) => {
+        return rows[0]
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectComments, addComment }
