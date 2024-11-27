@@ -108,14 +108,45 @@ describe("GET /api/articles", () => {
       })
     })
   })
-  test("404: sends an appropriate status and error message when attempting to access a non-existent endpoint", () => {
-    return request(app)
-      .get("/api/puppies")
-      .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe('does not exist')
-      })
+})
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: sends an array of comments for the given article_id", () => {
+      return request(app)
+      .get("/api/articles/3/comments")
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy("created_at", {
+          descending: true, 
+          coerce: true
+        })
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number), 
+            votes: expect.any(Number), 
+            created_at: expect.any(String), 
+            author: expect.any(String), 
+            body: expect.any(String), 
+            article_id: expect.any(Number)
+          })
+        })
   })
+})
+  test("404: sends an appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+    .get("/api/articles/10193490/comments")
+    .expect(404)
+    .then(({ body }) => {
+        expect(body.msg).toBe('does not exist')
+    })
+})
+  test("400: sends an appropriate status and error message when given an invalid id", () => {
+    return request(app)
+    .get("/api/articles/puppies/comments")
+    .expect(400)
+    .then(({ body }) => {
+        expect(body.msg).toBe('bad request');
+    });
+});
 })
   
 

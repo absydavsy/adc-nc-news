@@ -1,5 +1,5 @@
 const endpointsJson = require("./endpoints.json")
-const { getApi, getTopics, getArticleById, getArticles } = require("./api.controller")
+const { getApi, getTopics, getArticleById, getArticles, getComments } = require("./api.controller")
 const express = require("express")
 const app = express()
 
@@ -12,6 +12,8 @@ app.get('/api/topics', getTopics)
 app.get('/api/articles/:article_id', getArticleById)
 
 app.get('/api/articles', getArticles)
+
+app.get('/api/articles/:article_id/comments', getComments)
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "does not exist"})
