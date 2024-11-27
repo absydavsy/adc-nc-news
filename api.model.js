@@ -15,11 +15,14 @@ function selectArticleById(article_id) {
     let sqlQuery = "SELECT * FROM articles WHERE article_id = $1"
     const queryValues = [article_id]
 
-    return db.query(sqlQuery, queryValues).then(( {rows} ) => {
+    return db.query(sqlQuery, queryValues)
+    .then(( {rows} ) => {
         if (rows.length <= 0) {
             return Promise.reject({ status: 404, msg: "does not exist" })
+        } else {
+            return rows
         }
-        return rows
+        
     })
 }
 
@@ -30,5 +33,22 @@ function selectArticles() {
     })
 }
 
+function selectComments(article_id) {
+    if (isNaN(article_id)) {
+        return Promise.reject({ status: 400, msg: "bad request" })
+    }
 
-module.exports = { selectTopics, selectArticleById, selectArticles }
+    let sqlQuery = "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC"
+    const queryValues = [article_id]
+
+    return db.query(sqlQuery, queryValues)
+    .then(({ rows }) => {
+        if (rows.length <= 0) {
+            return Promise.reject({ status: 404, msg: "does not exist"})
+        }
+        return rows
+    })
+}
+
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectComments }
