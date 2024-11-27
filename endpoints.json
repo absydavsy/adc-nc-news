@@ -76,5 +76,21 @@
     }
     ]
   }
+  }, 
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves a newly posted comment",
+    "queries": [], 
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 19,
+          "author": "'lurker'",
+          "body": "'world is topsy turvy'",
+          "article_id": 6,
+          "votes": 0,
+          "created_at": "2024-11-27T19:45:56.648Z"        
+        }
+      ]
+    }
   }
 }

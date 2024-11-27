@@ -148,6 +148,43 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
 });
 })
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: responds with a newly posted comment", () => {
+    const newComment = {
+      username: "lurker",
+      body: "world is topsy turvy",
+      article_id: 6
+    }
+    return request(app)
+    .post("/api/articles/6/comments")
+    .send(newComment)
+    .expect(201)
+    .then(({ body: { comment } }) => {
+      expect(comment).toMatchObject({
+        body: "world is topsy turvy", 
+        comment_id: expect.any(Number), 
+        author: "lurker", 
+        article_id: 6,
+        votes: expect.any(Number), 
+      })
+    })
+  })
+  test("400: responds with an appropriate status and error message when provided with an invalid article_id", () => {
+    const newComment = {
+      username: "lurker",
+      body: "world is topsy turvy",
+      article_id: "puppies"
+    }
+    return request(app)
+      .post("/api/articles/puppies/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+})
   
 
 
