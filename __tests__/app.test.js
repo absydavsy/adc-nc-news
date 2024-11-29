@@ -186,7 +186,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 })
 
-describe("Patch /api/articles/:article_id", () => {
+describe("PATCH /api/articles/:article_id", () => {
   test("200: responds with newly updated article", () => {
     const newVotes = { inc_votes: 7 }
     return request(app)
@@ -226,10 +226,31 @@ describe("Patch /api/articles/:article_id", () => {
     .then(({ body }) => {
       expect(body.msg).toBe('does not exist')
     })
-
     })
+})
 
-  
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: responds with 204 and no content", () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+  })
+  test("404: responds with an appropriate status and error message when given a non-existent comment_id", () => {
+    return request(app)
+    .delete("/api/comments/0519")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('does not exist')
+    })
+  })
+  test("400: responds with an appropriate status and error message when given an invalid comment_id", () => {
+    return request(app)
+    .delete("/api/comments/puppies")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    })
+  })
 })
   
 
