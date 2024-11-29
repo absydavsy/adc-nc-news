@@ -49,6 +49,13 @@ function selectComments(article_id) {
     })
 }
 
+function selectUsers() {
+    return db.query(`SELECT * FROM users`)
+    .then(({ rows }) => {
+        return rows 
+    })
+}
+
 function addComment(comment) {
     const { username, body, article_id } = comment
 
@@ -88,4 +95,4 @@ function removeComment(comment_id) {
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectComments, addComment, updateArticleVotes, removeComment }
+module.exports = { selectTopics, selectArticleById, selectArticles, selectComments, selectUsers, addComment, updateArticleVotes, removeComment }
