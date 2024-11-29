@@ -185,6 +185,52 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 })
+
+describe("Patch /api/articles/:article_id", () => {
+  test("200: responds with newly updated article", () => {
+    const newVotes = { inc_votes: 7 }
+    return request(app)
+    .patch("/api/articles/1")
+    .send(newVotes)
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.updatedArticle.votes).toBe(107)
+    })
+  })
+  test("400: responds with appropriate status and error message when provided an invalid 'inc_votes", () => {
+    const newVotes = {inc_votes: 'puppies' }
+    return request(app)
+    .patch("/api/articles/1")
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    })
+  })
+  test("400: responds with an appropriate status and error message when provided with an invalid article_id", () => {
+    const newVotes = { inc_votes: 7 }
+    return request(app)
+    .patch("/api/articles/puppies")
+    .send(newVotes)
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toBe('Bad request')
+    })
+  })
+  test("404: responds with an appropriate status and error message when provided with a valid article_id that does not exist", () => {
+    const newVotes = { inc_votes: 7 }
+    return request(app)
+    .patch("/api/articles/101911")
+    .send(newVotes)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe('does not exist')
+    })
+
+    })
+
+  
+})
   
 
 
