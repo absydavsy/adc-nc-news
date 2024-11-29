@@ -1,5 +1,5 @@
 const endpointsJson = require("./endpoints.json")
-const { getApi, getTopics, getArticleById, getArticles, getComments, postComment, patchArticleVotes, deleteComment } = require("./api.controller")
+const { getApi, getTopics, getArticleById, getArticles, getComments, getUsers, postComment, patchArticleVotes, deleteComment } = require("./api.controller")
 const express = require("express")
 const app = express()
 
@@ -14,6 +14,8 @@ app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id/comments', getComments)
+
+app.get('/api/users', getUsers)
 
 app.post('/api/articles/:article_id/comments', postComment)
 
@@ -34,6 +36,7 @@ app.use((err, req, res, next) => {
   });
 
 app.use((err, req, res, next) => {
+    console.error(err)
     res.status(500).send({ msg: "Internal Server Error" });
   });
 

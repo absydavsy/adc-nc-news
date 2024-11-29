@@ -1,5 +1,5 @@
 const endpointsJson = require("./endpoints.json")
-const { selectTopics, selectArticleById, selectArticles, selectComments, addComment, updateArticleVotes, removeComment } = require("./api.model")
+const { selectTopics, selectArticleById, selectArticles, selectComments, selectUsers, addComment, updateArticleVotes, removeComment } = require("./api.model")
 
 function getApi(req, res) {
     res.status(200).send({ endpoints: endpointsJson })
@@ -38,6 +38,13 @@ function getComments(req, res, next) {
     .catch(next)
 }
 
+function getUsers(req, res, next) {
+    selectUsers().then((users) => {
+        res.status(200).send({ users: users })
+    })
+    .catch(next)
+}
+
 function postComment(req, res, next) {
     const { username, body, article_id } = req.body
     const comment = { username, body, article_id }
@@ -71,4 +78,4 @@ function deleteComment(req, res, next) {
 
 }
 
-module.exports = { getApi, getTopics, getArticleById, getArticles, getComments, postComment, patchArticleVotes, deleteComment }
+module.exports = { getApi, getTopics, getArticleById, getArticles, getComments, getUsers, postComment, patchArticleVotes, deleteComment }

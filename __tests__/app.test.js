@@ -149,6 +149,41 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 })
 
+describe("GET /api/users", () => {
+  test("200: responds with an array of user objects, each with properties of username, name, and avatar_url ", () => {
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then(({ body: { users } }) => {
+      expect(users).toHaveLength(4)
+      users.forEach((user) => {
+        expect(user).toMatchObject({
+          username: expect.any(String), 
+          name: expect.any(String),
+          avatar_url: expect.any(String)
+        })
+      })
+    })
+  })
+  // test("200: responds with an empty array when there are no users", () => {
+  //   return request(app)
+  //   .get("/api/users")
+  //   .expect(200)
+  //   .then(({ body: { users } }) => {
+  //     expect(users).toHaveLength(0)
+  //   })
+  // })
+  test("404: sends an appropriate status and error message when attempting to access a non-existent endpoint", () => {
+    return request(app)
+      .get("/api/puppies")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe('does not exist')
+      })
+  })
+})
+
+
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: responds with a newly posted comment", () => {
     const newComment = {
@@ -237,7 +272,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   })
   test("404: responds with an appropriate status and error message when given a non-existent comment_id", () => {
     return request(app)
-    .delete("/api/comments/0519")
+    .delete("/api/comments/10519")
     .expect(404)
     .then(({ body }) => {
       expect(body.msg).toBe('does not exist')
