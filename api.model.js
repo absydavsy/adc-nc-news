@@ -63,7 +63,7 @@ function addComment(comment) {
 }
 
 function updateArticleVotes(article_id, inc_votes) {
-    if(isNaN(inc_votes) || isNaN(article_id)) {
+    if (isNaN(inc_votes) || isNaN(article_id)) {
         return Promise.reject({ status: 400, msg: "Bad request" })
     }
     return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`, [inc_votes, article_id])
@@ -75,4 +75,17 @@ function updateArticleVotes(article_id, inc_votes) {
     })
 }
 
-module.exports = { selectTopics, selectArticleById, selectArticles, selectComments, addComment, updateArticleVotes }
+function removeComment(comment_id) {
+    if (isNaN(comment_id)) {
+        return Promise.reject({ status: 400, msg: "Bad request" })
+    }
+    return db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`, [comment_id])
+    .then(({ rows }) => {
+        if (rows.length === 0) {
+            return Promise.reject( { status: 404, msg: "does not exist" })
+        }
+        return 
+    })
+}
+
+module.exports = { selectTopics, selectArticleById, selectArticles, selectComments, addComment, updateArticleVotes, removeComment }
