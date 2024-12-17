@@ -173,6 +173,7 @@ describe("GET /api/users", () => {
   //     expect(users).toHaveLength(0)
   //   })
   // })
+  
   test("404: sends an appropriate status and error message when attempting to access a non-existent endpoint", () => {
     return request(app)
       .get("/api/puppies")
