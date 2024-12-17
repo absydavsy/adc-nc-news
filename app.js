@@ -1,40 +1,52 @@
-const endpointsJson = require("./endpoints.json")
-const { getApi, getTopics, getArticleById, getArticles, getComments, postComment, patchArticleVotes, deleteComment } = require("./api.controller")
-const express = require("express")
-const app = express()
+const endpointsJson = require("./endpoints.json");
+const {
+  getApi,
+  getTopics,
+  getArticleById,
+  getArticles,
+  getComments,
+  postComment,
+  patchArticleVotes,
+  deleteComment,
+} = require("./api.controller");
+const express = require("express");
+const app = express();
+const cors = require("cors");
 
-app.use(express.json())
+app.use(cors());
 
-app.get('/api', getApi)
+app.use(express.json());
 
-app.get('/api/topics', getTopics)
+app.get("/api", getApi);
 
-app.get('/api/articles/:article_id', getArticleById)
+app.get("/api/topics", getTopics);
 
-app.get('/api/articles', getArticles)
+app.get("/api/articles/:article_id", getArticleById);
 
-app.get('/api/articles/:article_id/comments', getComments)
+app.get("/api/articles", getArticles);
 
-app.post('/api/articles/:article_id/comments', postComment)
+app.get("/api/articles/:article_id/comments", getComments);
 
-app.patch('/api/articles/:article_id', patchArticleVotes)
+app.post("/api/articles/:article_id/comments", postComment);
 
-app.delete('/api/comments/:comment_id', deleteComment)
+app.patch("/api/articles/:article_id", patchArticleVotes);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("*", (req, res) => {
-    res.status(404).send({ msg: "does not exist"})
-})
+  res.status(404).send({ msg: "does not exist" });
+});
 
 app.use((err, req, res, next) => {
-    if (err.status && err.msg) {
-      res.status(err.status).send({ msg: err.msg });
-    } else {
-        next(err);
-    }
-  });
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
+});
 
 app.use((err, req, res, next) => {
-    res.status(500).send({ msg: "Internal Server Error" });
-  });
+  res.status(500).send({ msg: "Internal Server Error" });
+});
 
 module.exports = app;
